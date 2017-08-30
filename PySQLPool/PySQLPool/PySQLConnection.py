@@ -7,6 +7,7 @@ try:
     pymysql.install_as_MySQLdb()
 except ImportError:
     pass
+import sys
 import MySQLdb
 import datetime
 from threading import Semaphore

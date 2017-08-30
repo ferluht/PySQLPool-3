@@ -1,7 +1,7 @@
 __version__ = '0.3.8'
 __author__ = 'Nick Verbeck <nick@skeletaldesign.com>'
 
-import PySQLConnection
+from PySQLPool import PySQLConnection
 
 def getNewConnection(*args, **kargs):
 	"""
@@ -33,7 +33,7 @@ def getNewConnection(*args, **kargs):
 			kargs['commitOnEnd'] = args[5]
 	return PySQLConnection.PySQLConnection(*args, **kargs)
 
-import PySQLQuery
+from PySQLPool import PySQLQuery
 def getNewQuery(connection = None, commitOnEnd=False, *args, **kargs):
 	"""
 	Create a new PySQLQuery Class

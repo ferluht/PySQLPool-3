@@ -23,6 +23,6 @@ setup(name='PySQLPool',
                      'Development Status :: 5 - Production/Stable'],
       install_requires=['MySQL_python'],
       provides=['pysqlpool','PySQLPool'],
-      packages=['PySQLPool', 'PySQLConnection', 'PySQLQuery'],
+      packages=['PySQLPool'],
       package_dir={'PySQLPool': 'PySQLPool/PySQLPool'}
      )

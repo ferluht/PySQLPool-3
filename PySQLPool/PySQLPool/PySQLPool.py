@@ -5,7 +5,7 @@
 """
 
 from threading import Condition
-from PySQLConnection import PySQLConnectionManager
+from PySQLPool.PySQLConnection import PySQLConnectionManager
 
 
 class PySQLPool(object):
@@ -42,8 +42,8 @@ class PySQLPool(object):
         if not 'lock' in self.__dict__:
             self.lock = Condition()
 
-        if not 'connections' in self.__dict__:
-            self.connections = {}
+        if not 'conn' in self.__dict__:
+            self.conn = {}
 
     def Terminate(self):
         """
