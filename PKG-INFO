@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: PySQLPool
+Version: 0.3.8
+Summary: Python MySQL Connection Pooling and MySQL Query management
+Home-page: https://github.com/nerdynick/PySQLPool/
+Author: Nick Verbeck
+Author-email: nerdynick@gmail.com
+License: LGPL V3
+Download-URL: http://code.google.com/p/pysqlpool/downloads/list
+Description: UNKNOWN
+Platform: ALL
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Database
+Classifier: Programming Language :: Python
+Classifier: Operating System :: OS Independent
+Classifier: Development Status :: 5 - Production/Stable
+Provides: pysqlpool
+Provides: PySQLPool
