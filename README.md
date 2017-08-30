@@ -1,4 +1,4 @@
-##PySQLPool for Python3##
+## PySQLPool for Python3 ##
 
 What is PySQLPool
 =================
