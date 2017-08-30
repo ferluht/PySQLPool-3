@@ -2,7 +2,11 @@
 @author: Nick Verbeck
 @since: date 5/12/2008
 """
-
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
 import time
 import MySQLdb
 from PySQLPool import PySQLPool
@@ -21,7 +25,7 @@ class PySQLQuery(object):
 	@since: 5/12/2008
 	@version: 0.1
 	"""
-	
+
 	def __init__(self, PySQLConnectionObj, commitOnEnd = False):
 		"""
 		Constructor for PySQLQuery Class
@@ -40,7 +44,7 @@ class PySQLQuery(object):
 		self.conn = None
 		self.lastError = None
 		self.lastInsertID = None
-		
+
 	def __del__(self):
 		"""
 		On destruct make sure the current connection is returned back to the pool for use later
@@ -50,7 +54,7 @@ class PySQLQuery(object):
 		"""
 		if self.conn is not None:
 			self._ReturnConnection()
-	
+
 	def __enter__(self):
 		"""
 		Starts transaction, used with the 'with' statement.
@@ -58,7 +62,7 @@ class PySQLQuery(object):
 		@since: 5/21/2010
 		"""
 		self.Query('START TRANSACTION')
-	
+
 	def __exit__(self, exc_type, exc_value, traceback):
 		"""
 		Commits transaction, if no exception was raised.
@@ -67,13 +71,13 @@ class PySQLQuery(object):
 		"""
 		if exc_type is None:
 			self.Query('COMMIT')
-		
+
 	def Query(self, query, args=None):
 		"""
 		@deprecated: Depracating in favor of proper code standards.
 		"""
 		return self.query(query, args)
-		
+
 	#TODO: In the future lets decorate all our query calls with a connection fetching and releasing handler. Help to centralize all this logic for use in transactions in the future.
 	def query(self, query, args=None):
 		"""
@@ -87,7 +91,7 @@ class PySQLQuery(object):
 		self.affectedRows = None
 		self.lastError = None
 		cursor = None
-		
+
 		if logging_path is not None:
 			try:
 				file = os.path.join(logging_path, 'PySQLPool.Query.log')
@@ -97,24 +101,24 @@ class PySQLQuery(object):
 				fp.write("=== Args ===\n")
 				fp.write(str(args)+"\n")
 				fp.close()
-			except Exception, e:
+			except Exception as e:
 				pass
-		
+
 		try:
 			try:
 				self._GetConnection()
-				
+
 				self.conn.query = query
-				
+
 				#Execute query and store results
 				cursor = self.conn.connection.cursor(MySQLdb.cursors.DictCursor)
 				self.affectedRows = cursor.execute(query, args)
 				self.lastInsertID = self.conn.connection.insert_id()
 				self.rowcount = cursor.rowcount
-				
+
 				self.record = cursor.fetchall()
 				self.conn.updateCheckTime()
-				
+
 				if logging_path is not None:
 					try:
 						file = os.path.join(logging_path, 'PySQLPool.Query.log')
@@ -124,9 +128,9 @@ class PySQLQuery(object):
 						fp.write("=== Row Count ===\n")
 						fp.write(str(self.rowcount)+"\n")
 						fp.close()
-					except Exception, e:
+					except Exception as e:
 						pass
-			except Exception, e:
+			except Exception as e:
 				self.lastError = e
 				self.affectedRows = None
 				if logging_path is not None:
@@ -136,7 +140,7 @@ class PySQLQuery(object):
 						fp.write("=== Error ===\n")
 						fp.write(str(e.message)+"\n")
 						fp.close()
-					except Exception, e:
+					except Exception as e:
 						pass
 		finally:
 			if cursor is not None:
@@ -147,13 +151,13 @@ class PySQLQuery(object):
 			else:
 				return self.affectedRows
 	execute = query
-	
+
 	def QueryOne(self, query, args=None):
 		"""
 		@deprecated: Depracating in favor of proper code standards.
 		"""
 		return self.queryOne(query, args)
-	
+
 	def queryOne(self, query, args=None):
 		"""
 		Execute the passed in query against the database. 
@@ -164,7 +168,7 @@ class PySQLQuery(object):
 		@author: Nick Verbeck
 		@since: 5/12/2008
 		"""
-		
+
 		self.affectedRows = None
 		self.lastError = None
 		cursor = None
@@ -183,9 +187,9 @@ class PySQLQuery(object):
 					else:
 						self.record = row
 						yield row
-						
+
 				self.rowcount = cursor.rowcount
-			except Exception, e:
+			except Exception as e:
 				self.lastError = e
 				self.affectedRows = None
 		finally:
@@ -197,7 +201,7 @@ class PySQLQuery(object):
 			else:
 				raise StopIteration
 	executeOne = queryOne
-			
+
 	def queryMany(self, query, args):
 		"""
 		Executes a series of the same Insert Statments
@@ -213,7 +217,7 @@ class PySQLQuery(object):
 		self.rowcount = None
 		self.record = None
 		cursor = None
-		
+
 		try:
 			try:
 				self._GetConnection()
@@ -222,7 +226,7 @@ class PySQLQuery(object):
 				cursor = self.conn.connection.cursor(MySQLdb.cursors.DictCursor)
 				self.affectedRows = cursor.executemany(query, args)
 				self.conn.updateCheckTime()
-			except Exception, e:
+			except Exception as e:
 				self.lastError = e
 		finally:
 			if cursor is not None:
@@ -233,7 +237,7 @@ class PySQLQuery(object):
 			else:
 				return self.affectedRows
 	executeMany = queryMany
-			
+
 	def queryMulti(self, queries):
 		"""
 		Execute a series of Deletes,Inserts, & Updates in the Queires List
@@ -246,7 +250,7 @@ class PySQLQuery(object):
 		self.rowcount = None
 		self.record = None
 		cursor = None
-		
+
 		try:
 			try:
 				self._GetConnection()
@@ -259,7 +263,7 @@ class PySQLQuery(object):
 					else:
 						self.affectedRows += cursor.execute(query)
 				self.conn.updateCheckTime()
-			except Exception, e:
+			except Exception as e:
 				self.lastError = e
 		finally:
 			if cursor is not None:
@@ -270,7 +274,7 @@ class PySQLQuery(object):
 			else:
 				return self.affectedRows
 	executeMulti = queryMulti
-	
+
 	def _GetConnection(self):
 		"""
 		Retieves a prelocked connection from the Pool
@@ -298,10 +302,10 @@ class PySQLQuery(object):
 		if self.conn is not None:
 			if self.connInfo.commitOnEnd is True or self.commitOnEnd is True:
 				self.conn.Commit()
-					
+
 			self.Pool.returnConnection(self.conn)
 			self.conn = None
-			
+
 	def escape_string(self, string):
 		"""
 		This is just an adapter function to allow previus users of MySQLdb. 
@@ -310,7 +314,7 @@ class PySQLQuery(object):
 		@see: escapeString
 		"""
 		return MySQLdb.escape_string(string)
-	
+
 	def escapeString(self, string):
 		"""
 		Escapes a string for use in a query
@@ -321,7 +325,7 @@ class PySQLQuery(object):
 		@since: 9/7/2008
 		"""
 		return MySQLdb.escapeString(string)
-	
+
 	def escape(self, string):
 		"""
 		Escapes a string for use in a query
