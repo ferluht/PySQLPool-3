@@ -5,7 +5,7 @@
 """
 
 from threading import Condition
-from PySQLPool.PySQLConnection import PySQLConnectionManager
+from .PySQLPool.PySQLConnection import PySQLConnectionManager
 
 
 class PySQLPool(object):

@@ -77,7 +77,7 @@ class PySQLConnection(object):
 		else:
 			self.commitOnEnd = False
 			
-		hashStr = ''.join([str(x) for x in self.info.values()])
+		hashStr = ''.join([str(x) for x in list(self.info.values())])
 		if sys.version_info[0] < 3:
 			self.key = md5(hashStr).hexdigest()
 		else:

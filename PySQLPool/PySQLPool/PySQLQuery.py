@@ -9,7 +9,7 @@ except ImportError:
     pass
 import time
 import MySQLdb
-from PySQLPool.PySQLPool import PySQLPool
+from .PySQLPool.PySQLPool import PySQLPool
 import os.path
 
 logging_path = None
